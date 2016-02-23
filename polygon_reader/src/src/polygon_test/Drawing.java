@@ -1,5 +1,6 @@
 package src.polygon_test;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
@@ -54,11 +55,11 @@ public class Drawing extends JFrame{
 			for(int j = 0; j < polygons.get(i).vertexNumber(); j++){
 				if(polygons.get(i).vertex(j).x()<minX){
 					minX = polygons.get(i).vertex(j).x();
-					System.out.println("New X translation : " + minX);
+					//System.out.println("New X translation : " + minX);
 				}
 				if(polygons.get(i).vertex(j).y()<minY){
 					minY = polygons.get(i).vertex(j).y();
-					System.out.println("New Y translation : " + minY);
+					//System.out.println("New Y translation : " + minY);
 				}
 			}
 		}
@@ -68,9 +69,15 @@ public class Drawing extends JFrame{
 		
 		AffineTransform2D grid_Correction = new AffineTransform2D();
 		AffineTransform2D z = grid_Correction.createTranslation(minX,minY);
-		
-		x.transform(z).draw(g2d);	     
+		Color myNewPurple1 = new Color(103,58,196);
+		g2d.setColor(myNewPurple1);
+		x.transform(z).draw(g2d);
+		x.transform(z).fill(g2d);
+		Color myNewPurple = new Color(2,80,50);
+		g2d.setColor(myNewPurple);
 		y.transform(z).draw(g2d);
+		y.transform(z).fill(g2d);
+		
  
     }
  
