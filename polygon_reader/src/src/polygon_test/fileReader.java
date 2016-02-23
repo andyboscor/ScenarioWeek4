@@ -28,9 +28,9 @@ public class fileReader {
 		line = reader.readLine();
 		line = reader.readLine();
 		line = reader.readLine();
-		line = reader.readLine();
-		line = reader.readLine();
-		line = reader.readLine();
+//		line = reader.readLine();
+//		line = reader.readLine();
+//		line = reader.readLine();
 //		line = reader.readLine();
 //		line = reader.readLine();
 //		line = reader.readLine();

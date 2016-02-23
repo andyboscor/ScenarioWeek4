@@ -87,21 +87,25 @@ public class Drawing extends JFrame{
 		}
 		
 		//These values determine how much the shape should translate in the canvas
-		minX = Math.abs(minX)*1.5;
-		minY = Math.abs(minY)*1.5;
+		minX = Math.abs(minX)+30;
+		minY = Math.abs(minY)+30;
 		
 		Box2D shape = polygonDraw.boundingBox();
 		double area = (shape.getHeight())*(shape.getWidth());
 		
+		
 		//Change the numerator to change the size of the map on the canvas
-		double scaleFactor = (10000/area);
+//		double scaleFactor = (2000/area);
 		
-		System.out.println(scaleFactor);
+		System.out.println(minX);
+		System.out.println(minY);
+//		System.out.println(area);
+//		System.out.println(scaleFactor);
 		
-		Point2D centreOfScale = new Point2D(0.0,0.0);
+		Point2D centreOfScale = new Point2D(30.0,30.0);
 		AffineTransform2D grid_Correction = new AffineTransform2D();
 		AffineTransform2D z = grid_Correction.createTranslation(minX,minY);
-		AffineTransform2D scale = grid_Correction.createScaling(centreOfScale,scaleFactor, scaleFactor);
+		AffineTransform2D scale = grid_Correction.createScaling(centreOfScale,10, 10);
 		Color myNewPurple1 = new Color(103,58,196);
 		g2d.setColor(myNewPurple1);
 		polygonDraw.transform(z).transform(scale).draw(g2d);
