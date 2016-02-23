@@ -1,5 +1,4 @@
 
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -58,7 +57,7 @@ public class fileReader {
 	}
 	public static void writing() {
         try {
-            File statText = new File("/Users/andy/Desktop/Eclipse/Specifications/statText.txt");
+            File statText = new File("/Users/rajind/Desktop/statText.txt");
             FileOutputStream is = new FileOutputStream(statText);
             OutputStreamWriter osw = new OutputStreamWriter(is);    
             Writer w = new BufferedWriter(osw);
