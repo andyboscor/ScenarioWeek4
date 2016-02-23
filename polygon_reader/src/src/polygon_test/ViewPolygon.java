@@ -196,38 +196,79 @@ public class ViewPolygon
 		}
 		System.out.println();
 	}
-//	/*
-//	Test main
-//	public static void main(String[] args)
-//	{
-//		Polygon2D gallery = new SimplePolygon2D();
-//		gallery.addVertex(new Point2D(-8,10));
-//		gallery.addVertex(new Point2D(-8,5));
-//		gallery.addVertex(new Point2D(-5,2));
-//		gallery.addVertex(new Point2D(-7,0));
-//		gallery.addVertex(new Point2D(0,0));
-//		gallery.addVertex(new Point2D(4,4));
-//		gallery.addVertex(new Point2D(3,1));
-//		gallery.addVertex(new Point2D(8,-4));
-//		gallery.addVertex(new Point2D(8,4));
-//		gallery.addVertex(new Point2D(12,6));
-//		gallery.addVertex(new Point2D(15,0));
-//		gallery.addVertex(new Point2D(18,6));
-//		gallery.addVertex(new Point2D(10,11));
-//		gallery.addVertex(new Point2D(3,11));
-//		gallery.addVertex(new Point2D(5,15));
-//		gallery.addVertex(new Point2D(-1,12));
-//		gallery.addVertex(new Point2D(0,10));
-//		gallery.addVertex(new Point2D(-2,8));
-//		gallery.addVertex(new Point2D(-4,8));
-//		g = gallery;
-//		//System.out.println(g.contains(3.5, 7.5));
-//		Collection<LineSegment2D> edges = (Collection<LineSegment2D>) g.edges();
-//		Polygon2D viewPoly = getViewPolygon(gallery, new Point2D(4,4));
-//		Collection<Point2D> vertices = viewPoly.vertices();
-//		for(Point2D vertex : vertices)
-//		{
-//			System.out.println(vertex);
-//		}
-//	}*/
+
+	public static void checkGuards(Polygon2D gallery, Collection<Point2D> guards)
+	{
+		g = gallery;
+		Collection<Point2D> vertices = g.vertices();
+		boolean flag = false;
+		for (Point2D vertex : vertices)
+		{
+			flag = false;
+			Polygon2D viewPoly = getViewPolygon(gallery, vertex);
+			for (Point2D guard : guards)
+			{
+				if (viewPoly.contains(guard))
+					flag = true;
+			}
+			if (flag == false)
+				System.out.println(vertex);
+			break;
+		}
+	}
+/* Test main */
+
+	public static void main(String[] args)
+	{
+		Polygon2D gallery = new SimplePolygon2D();
+		gallery.addVertex(new Point2D(0, 0));
+		gallery.addVertex(new Point2D(2, 0));
+		gallery.addVertex(new Point2D(2, 1));
+		gallery.addVertex(new Point2D(1, 1));
+		gallery.addVertex(new Point2D(1, 2));
+		gallery.addVertex(new Point2D(3, 2));
+		gallery.addVertex(new Point2D(3, 3));
+		gallery.addVertex(new Point2D(0, 3));
+		Polygon2D guards = new SimplePolygon2D();
+		guards.addVertex(new Point2D(20, 0));
+		guards.addVertex(new Point2D(3, 2.5));
+		Collection<Point2D> guardscol = guards.vertices();
+		checkGuards(gallery, guardscol);
+		// System.out.println(g.contains(2, 0));
+		Collection<LineSegment2D> edges = (Collection<LineSegment2D>) g.edges();
+	}
+	// /*
+	// Test main
+	// public static void main(String[] args)
+	// {
+	// Polygon2D gallery = new SimplePolygon2D();
+	// gallery.addVertex(new Point2D(-8,10));
+	// gallery.addVertex(new Point2D(-8,5));
+	// gallery.addVertex(new Point2D(-5,2));
+	// gallery.addVertex(new Point2D(-7,0));
+	// gallery.addVertex(new Point2D(0,0));
+	// gallery.addVertex(new Point2D(4,4));
+	// gallery.addVertex(new Point2D(3,1));
+	// gallery.addVertex(new Point2D(8,-4));
+	// gallery.addVertex(new Point2D(8,4));
+	// gallery.addVertex(new Point2D(12,6));
+	// gallery.addVertex(new Point2D(15,0));
+	// gallery.addVertex(new Point2D(18,6));
+	// gallery.addVertex(new Point2D(10,11));
+	// gallery.addVertex(new Point2D(3,11));
+	// gallery.addVertex(new Point2D(5,15));
+	// gallery.addVertex(new Point2D(-1,12));
+	// gallery.addVertex(new Point2D(0,10));
+	// gallery.addVertex(new Point2D(-2,8));
+	// gallery.addVertex(new Point2D(-4,8));
+	// g = gallery;
+	// //System.out.println(g.contains(3.5, 7.5));
+	// Collection<LineSegment2D> edges = (Collection<LineSegment2D>) g.edges();
+	// Polygon2D viewPoly = getViewPolygon(gallery, new Point2D(4,4));
+	// Collection<Point2D> vertices = viewPoly.vertices();
+	// for(Point2D vertex : vertices)
+	// {
+	// System.out.println(vertex);
+	// }
+	// }*/
 }
