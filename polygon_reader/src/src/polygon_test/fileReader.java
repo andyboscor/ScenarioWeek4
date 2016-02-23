@@ -8,6 +8,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+
+import javax.swing.SwingUtilities;
+
 import java.awt.*;
 
 import math.geom2d.Point2D;
@@ -15,10 +18,16 @@ import math.geom2d.polygon.*;
 
 public class fileReader {
 	
+	ViewPolygon viewer = new ViewPolygon();
+	static Drawing drawer = new Drawing();
+	
 	public static void readFile() throws IOException{
-		FileReader r = new FileReader("/Users/andy/Desktop/Eclipse/Specifications/guards.pol");
+		FileReader r = new FileReader("/Users/rajind/Google Drive/Year 2/COMP205P/Scenario Week IV/guards.pol");
 		BufferedReader reader = new BufferedReader(r);
 		String line;
+		line = reader.readLine();
+		line = reader.readLine();
+		line = reader.readLine();
 		line = reader.readLine();
 		line = line.replace(":", ",");
 		line = line.replace(")","");
@@ -36,27 +45,20 @@ public class fileReader {
 			Point2D point = new Point2D(x,y);
 			polygon.addVertex(point);
 		}
-		int n = polygon.vertexNumber();
-		
-		for(int i = 0; i<n;i++){
-			System.out.println(polygon.vertex(i));
-		}
-		
+//		int n = polygon.vertexNumber();
+//		
+//		for(int i = 0; i<n;i++){
+//			System.out.println(polygon.vertex(i));
+//		}
+//		
+		drawer.drawPolygon(polygon);
 		
 		
 	}
-	private void doDrawing(Graphics g,Polygon2D polygon) {
 
-        Graphics2D g2d = (Graphics2D) g;
-
-        g2d.setPaint(Color.blue);
-        
-        polygon.draw(g2d);
-       
-	}
 	public static void writing() {
         try {
-            File statText = new File("/Users/andy/Desktop/Eclipse/Specifications/statText.txt");
+            File statText = new File("/Users/rajind/Desktop/output.txt");
             FileOutputStream is = new FileOutputStream(statText);
             OutputStreamWriter osw = new OutputStreamWriter(is);    
             Writer w = new BufferedWriter(osw);
@@ -67,14 +69,15 @@ public class fileReader {
         }
     }
 
-	public static void main(String[] args) {
+	public static void main(String[] args) {	
+		
 		try {
 			readFile();
-			writing();
+			//writing();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-
+	
 }
