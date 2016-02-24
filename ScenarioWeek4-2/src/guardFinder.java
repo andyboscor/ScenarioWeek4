@@ -21,13 +21,13 @@ public class guardFinder
 			System.out.println((j+1) + ": ");
 			ArrayList<Point2D> guards = new ArrayList<Point2D>();
 			Polygon2D gallery = fileReader.readFile(reader);
-			Drawing d = new Drawing(gallery);
-			d.drawPolygon(gallery);
-			for(Point2D p : gallery.vertices())
+			//Drawing d = new Drawing(gallery);
+			//d.drawPolygon(gallery);
+			/*for(Point2D p : gallery.vertices())
 			{
 				System.out.println(p);
-			}
-			System.out.println(gallery.vertexNumber());
+			}*/
+			//System.out.println(gallery.vertexNumber());
 			ArrayList<Point2D> unseen = makeCopy(gallery.vertices());
 			Polygon2D viewPoly = null, intersection = null;
 			boolean ok;
@@ -49,11 +49,8 @@ public class guardFinder
 					else 
 					{
 						Polygon2D aux = null;
-						try
-						{
-							aux = Polygons2D.intersection(viewPoly, intersection);
-						}
-						catch(IllegalStateException e)
+						aux = Polygons2D.intersection(viewPoly, intersection);
+						/*catch(IllegalStateException e)
 						{
 							System.out.println("View Polygon");
 							for(Point2D x : viewPoly.vertices())
@@ -73,7 +70,7 @@ public class guardFinder
 //							d1.drawPolygon(gallery);
 //							Drawing d3 = new Drawing(intersection);
 //							d1.drawPolygon(intersection);
-						}
+						}*/
 						if(aux.vertexNumber() != 0)
 						{
 							intersection = aux;
@@ -89,10 +86,13 @@ public class guardFinder
 				guards.add(intersection.centroid());
 				intersection = null;
 			}
-			/*for(Point2D p : guards)
+			for(Point2D guard : guards)
 			{
-				System.out.println(p);
-			}*/
+				if(!gallery.contains(guard))
+				{
+					System.out.println("!!! Not in gallery: " + guard);
+				}
+			}
 			fileReader.write(writer, j+1, guards);
 		}
 	}

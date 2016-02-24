@@ -12,12 +12,14 @@ import math.geom2d.polygon.*;
 public class ViewPolygon
 {
 	private final static double epsilon = 0.0000000001;
+	private static Polygon2D result;
 	private static Polygon2D g;
 	
 	// Generates the field of view from Start as a polygon
 	public static Polygon2D getViewPolygon(Polygon2D gallery, Point2D start)
 	{
-		g = copyPoly(gallery);
+		result = copyPoly(gallery);
+		g = gallery;
 		Collection<Point2D> vertices = gallery.vertices();
 		Point2D a;
 		for(Point2D v : vertices)
@@ -31,21 +33,27 @@ public class ViewPolygon
 					{
 						int index = getPosition(a);
 						if (index != -1) {
-							g.insertVertex(index, a);
+							result.insertVertex(index, a);
 						}
 					}
 				}
 			}
 		}
 		int i = 0;
-		while(i < g.vertexNumber())
+		printPoly(result, "smth");
+		System.out.println(isReachable(new LineSegment2D(1, 4, -2, 2.5), 0));
+		while(i < result.vertexNumber())
 		{
-			Point2D v = g.vertex(i);
+			Point2D v = result.vertex(i);
 			if(!start.almostEquals(v, epsilon))
 			{
+				System.out.println("!!! " + isReachable(new LineSegment2D(1, 4, -2, 2.5), 0));
 				if(!isReachable(new LineSegment2D(start, v),0))
 				{
-					g.removeVertex(i);
+					v = null;
+					System.out.println("removed " + result.vertex(i));
+					result.removeVertex(i);
+					//System.out.println("now at i" + g.vertex(i));
 				}
 				else
 				{
@@ -57,14 +65,14 @@ public class ViewPolygon
 				i++;
 			}
 		}
-		return g;
+		return result;
 	}
 	
 	//Returns the position where a should be inserted in the polygon
 	private static int getPosition(Point2D a)
 	{
 		int i = 0;
-		for(LineSegment2D edge : g.edges())
+		for(LineSegment2D edge : result.edges())
 		{
 			if (edge.firstPoint().almostEquals(a, epsilon) || edge.lastPoint().almostEquals(a, epsilon)) {
 				return -1;
@@ -77,53 +85,6 @@ public class ViewPolygon
 		}
 		return -1;
 	}
-	/*private static boolean isReachable(Point2D start, Point2D end)
-	{
-		LineSegment2D line = new LineSegment2D(start, end);
-		if(!containsLine(line, 0))
-		{
-			return false;
-		}
-		//WTF
-		Collection<LineSegment2D> edges = (Collection<LineSegment2D>) g.edges();
-		for(LineSegment2D edge : edges)
-		{
-			if(LineSegment2D.isColinear(edge, line))
-			{
-				continue;
-			}
-			if(intersects(edge, line))
-			{
-				return false;
-			}
-		}
-		return true;
-	}*/
-	/*private static boolean isVertex(Point2D p)
-	{
-		for(Point2D x : g.vertices())
-		{
-			if(p.almostEquals(x, epsilon) == true)
-			{
-				return true;
-			}
-		}
-		return false;
-	}
-	//L1 does not include end points.
-	/*private static boolean intersects(LineSegment2D l1, LineSegment2D l2)
-	{
-		if(!LineSegment2D.intersects(l1, l2))
-		{
-			return false;
-		}
-		Point2D result = LineSegment2D.getIntersection(l1, l2);
-		if(result.almostEquals(l1.firstPoint(), epsilon) || result.almostEquals(l1.lastPoint(), epsilon) || result.almostEquals(l2.firstPoint(), epsilon))
-		{
-			return false;
-		}
-		return true;
-	}*/
 	
 	// Returns the intersection of ray from start in the direction of end 
 	// with the polygon, and null if there is none. End needs to be reachable from start.
@@ -137,10 +98,7 @@ public class ViewPolygon
 			if(intersection != null)
 			{
 				if(isReachable(new LineSegment2D(end, intersection), 0))
-				{
-					//WTF (means it's not a vertex)
-					//if(ray.intersection(edge).almostEquals(edge.firstPoint(), epsilon) || ray.intersection(edge).almostEquals(edge.lastPoint(), epsilon))
-					
+				{	
 					// Intersection point needs to be different from start and end (to not get a Degenerated Line exception)
 					if (intersection.almostEquals(start, epsilon) || intersection.almostEquals(end, epsilon))
 					{
@@ -148,17 +106,6 @@ public class ViewPolygon
 					}
 					// If it's reachable it has to be the closest point.
 					return intersection;
-//					if(result == null)
-//					{
-//						result = intersection;
-//					}
-//					else
-//					{
-//						if(start.distance(intersection) < start.distance(result))
-//						{
-//							result = intersection;
-//						}
-//					}
 				}
 			}
 		}
@@ -176,11 +123,11 @@ public class ViewPolygon
 		return result;
 	}
 	
-	public static void printEdges()
+	public static void printEdges(Polygon2D p)
 	{
 		System.out.println("Edges: ");
 		int i = 1;
-		for(LineSegment2D edge : g.edges())
+		for(LineSegment2D edge : p.edges())
 		{
 			System.out.println(i + ": " + edge.firstPoint() + "->" + edge.lastPoint());
 			i++;
@@ -198,33 +145,92 @@ public class ViewPolygon
 		LineSegment2D rhs = new LineSegment2D(mid, l.lastPoint());
 		return g.contains(mid) && isReachable(lhs, k+1) && isReachable(rhs, k+1);
 	}
-	/*public static void main(String[] args)
-	{
-		Polygon2D gallery = new SimplePolygon2D();
-		gallery.addVertex(new Point2D(-7, 0));
-		gallery.addVertex(new Point2D(-5, 0));
-		gallery.addVertex(new Point2D(-5, -1));
-		gallery.addVertex(new Point2D(-4, -1));
-		gallery.addVertex(new Point2D(-4, 2));
-		gallery.addVertex(new Point2D(-3, 2));
-		gallery.addVertex(new Point2D(-3, 0));
-		gallery.addVertex(new Point2D(-2, 0));
-		gallery.addVertex(new Point2D(-2, 4));
-		gallery.addVertex(new Point2D(1, 4));
-		gallery.addVertex(new Point2D(-1, 3));
-		gallery.addVertex(new Point2D(-1, -2));
-		gallery.addVertex(new Point2D(-7, -2));
-		g = gallery;
-		//Drawing d = new Drawing(g);
-		//d.drawPolygon(g);
-		//LineSegment2D l = new LineSegment2D(-1, 0, 0.5, 2);
-		//Collection<LineSegment2D> edges = (Collection<LineSegment2D>) g.edges();
-		Polygon2D viewPoly = getViewPolygon(gallery, new Point2D(-7,0));
-		Collection<Point2D> vertices = viewPoly.vertices();
-		System.out.println("View");
-		for(Point2D vertex : vertices)
+	
+	private static void printPoly (Polygon2D p, String tag) {
+		System.out.println(tag);
+		for(Point2D vertex : p.vertices())
 		{
-			System.out.println(vertex);
+				System.out.println(vertex);
 		}
-	}*/
+		System.out.println();
+	}
+//	public static void main(String[] args)
+//	{
+//		Polygon2D gallery = new SimplePolygon2D();
+//		gallery.addVertex(new Point2D(-7, 0));
+//		gallery.addVertex(new Point2D(-7, -2));
+//		gallery.addVertex(new Point2D(-1, -2));
+//		gallery.addVertex(new Point2D(-1, 3));
+//		gallery.addVertex(new Point2D(1, 4));
+//		gallery.addVertex(new Point2D(-2, 4));
+//		gallery.addVertex(new Point2D(-2, 0));
+//		gallery.addVertex(new Point2D(-3, 0));
+//		gallery.addVertex(new Point2D(-3, 2));
+//		gallery.addVertex(new Point2D(-4, 2));
+//		gallery.addVertex(new Point2D(-4, -1));
+//		gallery.addVertex(new Point2D(-5, -1));
+//		gallery.addVertex(new Point2D(-5, 0));
+//		
+//		result = copyPoly(gallery);
+//		
+//		System.out.println("lineseg");
+////		System.out.println(isReachable(new LineSegment2D(1, 4, -2, 2.5), 0));
+////		System.out.println(result.contains(new Point2D(0, 3.5)));
+////		
+////		System.out.println(isReachable(new LineSegment2D(-7, 0, -3, 2), 0));
+////		System.out.println(isReachable(new LineSegment2D(-3, 2, -7, 0), 0));
+//		
+//		Polygon2D viewPoly = getViewPolygon(gallery, new Point2D(-5,0));
+//		
+//		printPoly (viewPoly, "viewPoly");
+//	}
 }
+
+
+/*private static boolean isReachable(Point2D start, Point2D end)
+{
+	LineSegment2D line = new LineSegment2D(start, end);
+	if(!containsLine(line, 0))
+	{
+		return false;
+	}
+	//WTF
+	Collection<LineSegment2D> edges = (Collection<LineSegment2D>) g.edges();
+	for(LineSegment2D edge : edges)
+	{
+		if(LineSegment2D.isColinear(edge, line))
+		{
+			continue;
+		}
+		if(intersects(edge, line))
+		{
+			return false;
+		}
+	}
+	return true;
+}*/
+/*private static boolean isVertex(Point2D p)
+{
+	for(Point2D x : g.vertices())
+	{
+		if(p.almostEquals(x, epsilon) == true)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+//L1 does not include end points.
+/*private static boolean intersects(LineSegment2D l1, LineSegment2D l2)
+{
+	if(!LineSegment2D.intersects(l1, l2))
+	{
+		return false;
+	}
+	Point2D result = LineSegment2D.getIntersection(l1, l2);
+	if(result.almostEquals(l1.firstPoint(), epsilon) || result.almostEquals(l1.lastPoint(), epsilon) || result.almostEquals(l2.firstPoint(), epsilon))
+	{
+		return false;
+	}
+	return true;
+}*/
