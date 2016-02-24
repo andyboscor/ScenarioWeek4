@@ -3,7 +3,7 @@ package src.polygon_test;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.geom.Ellipse2D;
+import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -13,14 +13,15 @@ import javax.swing.SwingUtilities;
 import math.geom2d.AffineTransform2D;
 import math.geom2d.Box2D;
 import math.geom2d.Point2D;
-import math.geom2d.polygon.*;
+import math.geom2d.polygon.Polygon2D;
+import math.geom2d.conic.Ellipse2D;
 
 public class Drawing extends JFrame{
 	
 	Polygon2D polygonDraw;
 	Collection<Point2D> guardsdraw;
-	int xSize = 600;
-	int ySize = 600;
+	int xSize = 1280;
+	int ySize = 720;
 	
 	public Drawing() {
         super("Polygon Drawing Demo");
@@ -73,19 +74,19 @@ public class Drawing extends JFrame{
 		for(int j = 0; j < polygonDraw.vertexNumber(); j++){
 				if(polygonDraw.vertex(j).x()<minX){
 					minX = polygonDraw.vertex(j).x();
-					System.out.println("New X translation : " + minX);
+					//System.out.println("New X translation : " + minX);
 				}
 				if(polygonDraw.vertex(j).x()>xSize){
 					maxX = polygonDraw.vertex(j).x();
-					System.out.println("X goes beyond canvas : " + maxX);
+					//System.out.println("X goes beyond canvas : " + maxX);
 				}
 				if(polygonDraw.vertex(j).y()<minY){
 					minY = polygonDraw.vertex(j).y();
-					System.out.println("New Y translation : " + minY);
+					//System.out.println("New Y translation : " + minY);
 				}
 				if(polygonDraw.vertex(j).x()>ySize){
 					maxY = polygonDraw.vertex(j).y();
-					System.out.println("Y goes beyond canvas : " + maxY);
+					//System.out.println("Y goes beyond canvas : " + maxY);
 				}
 		}
 		
@@ -97,30 +98,39 @@ public class Drawing extends JFrame{
 		double area = (shape.getHeight())*(shape.getWidth());
 		
 		
-		//Change the numerator to change the size of the map on the canvas
-//		double scaleFactor = (2000/area);
-		
-//		System.out.println(minX);
-//		System.out.println(minY);
-//		System.out.println(area);
-//		System.out.println(scaleFactor);
+		double xFactor = xSize*0.95/(shape.getWidth());
+		double yFactor = ySize*0.95/(shape.getHeight());
+		System.out.println(xFactor);
+		System.out.println(yFactor);
 		
 		Point2D centreOfScale = new Point2D(30.0,30.0);
 		AffineTransform2D grid_Correction = new AffineTransform2D();
 		AffineTransform2D z = grid_Correction.createTranslation(minX,minY);
-		AffineTransform2D scale = grid_Correction.createScaling(centreOfScale,10, 10);
+		AffineTransform2D scale = grid_Correction.createScaling(centreOfScale,xFactor, yFactor);
 		Color myNewPurple1 = new Color(103,58,196);
 		g2d.setColor(myNewPurple1);
 		polygonDraw.transform(z).transform(scale).draw(g2d);
 		polygonDraw.transform(z).transform(scale).fill(g2d);
-		for (Point2D guard:guardsdraw)
-		{
-		Ellipse2D.Double circle = new Ellipse2D.Double(guard.getX()*minX, guard.getY()*minY, 10.0, 10.0);
+
+		ArrayList<Ellipse2D> guards = new ArrayList();
+		
 		Color myNewColor = new Color (30,192,51);
 		g2d.setColor(myNewColor);
-		g2d.fill(circle);
+		
+		double size = 100;
+		
+		for (Point2D guard:guardsdraw)
+		{
+		Ellipse2D point = new Ellipse2D(guard.getX()+minX,guard.getY()+minY, (size/2.0)/500,size/500);
+		point.fill(g2d);
+		guards.add(point);
+		
 		}
 		
+		for(int i = 0; i < guards.size(); i++){
+			guards.get(i).transform(scale).draw(g2d);
+			guards.get(i).transform(scale).fill(g2d);
+		}
     }
  
     public void paint(Graphics g) {
