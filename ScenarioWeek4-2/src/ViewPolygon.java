@@ -40,18 +40,14 @@ public class ViewPolygon
 			}
 		}
 		int i = 0;
-		printPoly(result, "smth");
-		System.out.println(isReachable(new LineSegment2D(1, 4, -2, 2.5), 0));
 		while(i < result.vertexNumber())
 		{
 			Point2D v = result.vertex(i);
 			if(!start.almostEquals(v, epsilon))
 			{
-				System.out.println("!!! " + isReachable(new LineSegment2D(1, 4, -2, 2.5), 0));
 				if(!isReachable(new LineSegment2D(start, v),0))
 				{
 					v = null;
-					System.out.println("removed " + result.vertex(i));
 					result.removeVertex(i);
 					//System.out.println("now at i" + g.vertex(i));
 				}
@@ -146,7 +142,7 @@ public class ViewPolygon
 		return g.contains(mid) && isReachable(lhs, k+1) && isReachable(rhs, k+1);
 	}
 	
-	private static void printPoly (Polygon2D p, String tag) {
+	public static void printPoly (Polygon2D p, String tag) {
 		System.out.println(tag);
 		for(Point2D vertex : p.vertices())
 		{
@@ -172,7 +168,6 @@ public class ViewPolygon
 //		gallery.addVertex(new Point2D(-5, 0));
 //		
 //		result = copyPoly(gallery);
-//		
 //		System.out.println("lineseg");
 ////		System.out.println(isReachable(new LineSegment2D(1, 4, -2, 2.5), 0));
 ////		System.out.println(result.contains(new Point2D(0, 3.5)));

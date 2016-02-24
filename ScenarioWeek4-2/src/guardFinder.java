@@ -11,77 +11,57 @@ import java.util.Collection;
 
 public class guardFinder
 {
+	private static String name = "hamster";
+	private static String password = "sml4l1i6aamsvhoi9irui5jdv8";
 	public static void main(String[] args) throws IOException
 	{
 		FileReader r = new FileReader("/Users/williambhot/Documents/Uni/Year2/Term2/Scenario-Week-4/guards.pol");
 		BufferedReader reader = new BufferedReader(r);
 		PrintWriter writer = new PrintWriter("/Users/williambhot/Desktop/output.txt", "UTF-8");
+		writer.println(name);
+		writer.println(password);
 		for(int j = 0; j < 30; j++)
 		{
-			System.out.println((j+1) + ": ");
-			ArrayList<Point2D> guards = new ArrayList<Point2D>();
+			System.out.println(j+1);
 			Polygon2D gallery = fileReader.readFile(reader);
-			//Drawing d = new Drawing(gallery);
-			//d.drawPolygon(gallery);
-			/*for(Point2D p : gallery.vertices())
-			{
-				System.out.println(p);
-			}*/
-			//System.out.println(gallery.vertexNumber());
+			
+			ArrayList<Point2D> guards = new ArrayList<Point2D>();
 			ArrayList<Point2D> unseen = makeCopy(gallery.vertices());
 			Polygon2D viewPoly = null, intersection = null;
-			boolean ok;
+			boolean flag;
 			int i;
 			while(!unseen.isEmpty())
 			{
 				i = 0;
 				while(i < unseen.size())
 				{
-					ok = true;
+					flag = true;
 					Point2D vertex = unseen.get(i);
 					viewPoly = ViewPolygon.getViewPolygon(gallery, vertex);
 					if(intersection == null)
 					{
 						intersection = viewPoly;
 						unseen.remove(vertex);
-						ok = false;
+						flag = false;
 					}
 					else 
 					{
 						Polygon2D aux = null;
 						aux = Polygons2D.intersection(viewPoly, intersection);
-						/*catch(IllegalStateException e)
-						{
-							System.out.println("View Polygon");
-							for(Point2D x : viewPoly.vertices())
-							{
-								System.out.println(x);
-							}
-							System.out.println();
-							System.out.println("Intersection");
-							for(Point2D x : intersection.vertices())
-							{
-								System.out.println(x);
-							}
-							System.out.println();
-//							Drawing d1 = new Drawing(viewPoly);
-//							d1.drawPolygon(viewPoly);
-//							Drawing d2 = new Drawing(gallery);
-//							d1.drawPolygon(gallery);
-//							Drawing d3 = new Drawing(intersection);
-//							d1.drawPolygon(intersection);
-						}*/
-						if(aux.vertexNumber() != 0)
+						if(aux.area() != 0)
 						{
 							intersection = aux;
 							unseen.remove(vertex);
-							ok = false;
+							flag = false;
 						}
 					}
-					if(ok == true)
+					if(flag == true)
 					{
 						i++;
 					}
+				}
+				if (intersection.area() == 0) {
+					ViewPolygon.printPoly(intersection, "intersection");
 				}
 				guards.add(intersection.centroid());
 				intersection = null;
