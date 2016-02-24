@@ -3,7 +3,9 @@ package src.polygon_test;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.geom.Ellipse2D;
 import java.util.ArrayList;
+import java.util.Collection;
 
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
@@ -16,6 +18,7 @@ import math.geom2d.polygon.*;
 public class Drawing extends JFrame{
 	
 	Polygon2D polygonDraw;
+	Collection<Point2D> guardsdraw;
 	int xSize = 600;
 	int ySize = 600;
 	
@@ -28,10 +31,10 @@ public class Drawing extends JFrame{
         
     }
 	
-	public Drawing(Polygon2D polygon){
+	public Drawing(Polygon2D polygon, Collection<Point2D> guards){
         super("Polygon Drawing Demo");
         this.polygonDraw = polygon;
-        
+        this.guardsdraw = guards;
         setSize(xSize, ySize);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -97,8 +100,8 @@ public class Drawing extends JFrame{
 		//Change the numerator to change the size of the map on the canvas
 //		double scaleFactor = (2000/area);
 		
-		System.out.println(minX);
-		System.out.println(minY);
+//		System.out.println(minX);
+//		System.out.println(minY);
 //		System.out.println(area);
 //		System.out.println(scaleFactor);
 		
@@ -110,6 +113,14 @@ public class Drawing extends JFrame{
 		g2d.setColor(myNewPurple1);
 		polygonDraw.transform(z).transform(scale).draw(g2d);
 		polygonDraw.transform(z).transform(scale).fill(g2d);
+		for (Point2D guard:guardsdraw)
+		{
+		Ellipse2D.Double circle = new Ellipse2D.Double(guard.getX()*minX, guard.getY()*minY, 10.0, 10.0);
+		Color myNewColor = new Color (30,192,51);
+		g2d.setColor(myNewColor);
+		g2d.fill(circle);
+		}
+		
     }
  
     public void paint(Graphics g) {
@@ -117,13 +128,14 @@ public class Drawing extends JFrame{
         drawLines(g);
     }
     
-    public void drawPolygon(Polygon2D polygon){
+    public void drawPolygon(Polygon2D polygon, Collection<Point2D> guards){
     	this.polygonDraw = polygon;
+    	this.guardsdraw = guards;
     	System.out.println(polygonDraw.vertices());
     	SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                new Drawing(polygonDraw).setVisible(true);
+                new Drawing(polygonDraw,guardsdraw).setVisible(true);
             }
         });
 
