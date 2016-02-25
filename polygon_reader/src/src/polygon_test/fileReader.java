@@ -8,30 +8,31 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.swing.SwingUtilities;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 import math.geom2d.Point2D;
 import math.geom2d.polygon.*;
 
-public class fileReader {
+public class fileReader{
 	
 	ViewPolygon viewer = new ViewPolygon();
 	static Drawing drawer = new Drawing();
+	static int second_Index = 1;
 	
-	public static void readFile() throws IOException{
-		FileReader r = new FileReader("/Users/andy/Desktop/Eclipse/Specifications/guards.pol");
+	public static void readFile(int index) throws IOException{
+		FileReader r = new FileReader("/Users/rajind/Google Drive/Year 2/COMP205P/Scenario Week IV/guards.pol");
 		BufferedReader reader = new BufferedReader(r);
-		String line;
-		line = reader.readLine();
-		line = reader.readLine();
-		line = reader.readLine();
-		line = reader.readLine();
-		line = reader.readLine();
-		line = reader.readLine();
+		String line = null;
+		for(int i = 1; i <= index ; i++){
+			line = reader.readLine();
+		}
 		line = line.replace(":", ",");
 		line = line.replace(")","");
 		line= line.replace("(", "");
@@ -54,17 +55,16 @@ public class fileReader {
 //			System.out.println(polygon.vertex(i));
 //		}
 //		
-	//	drawer.drawPolygon(polygon);
-		
+		drawer.drawPolygon(polygon);
 		
 	}
 	
-	public static void readSecondFile() throws IOException{
+	public static void readSecondFile(int index) throws IOException{
 		ViewPolygon chguards = new ViewPolygon();
-		FileReader r2 = new FileReader("/Users/andy/Desktop/Eclipse/Specifications/check.pol.txt");
+		FileReader r2 = new FileReader("/Users/rajind/Google Drive/Year 2/COMP205P/Scenario Week IV/check.pol");
 		BufferedReader reader2 = new BufferedReader(r2);
 		String line = null;
-		for(int j =1 ;j<=10; j++)
+		for(int j =1 ;j<=index; j++)
 		{
 		line = reader2.readLine();
 		}
@@ -99,9 +99,41 @@ public class fileReader {
 		
 	}
 
+	public static void multiDraw(int index) throws IOException{
+		ArrayList <Polygon2D> polygons = new ArrayList<Polygon2D>();
+		FileReader r = new FileReader("/Users/rajind/Google Drive/Year 2/COMP205P/Scenario Week IV/multidraw.pol");
+		BufferedReader reader = new BufferedReader(r);
+		String line = null;
+		Polygon2D polygon = new SimplePolygon2D();
+		for(int i = 1; i <= index ; i++){
+			line = reader.readLine();
+			line = line.replace(":", ",");
+			line = line.replace(")","");
+			line= line.replace("(", "");
+			String[] arr= line.split(", ");
+			
+			for(int j = 1; j<arr.length; j+=2){
+			    double x = Double.parseDouble(arr[j]);
+			    double y = Double.parseDouble(arr[j+1]);
+				Point2D point = new Point2D(x,y);
+				polygon.addVertex(point);
+			}
+		}
+		polygons.add(polygon);
+		
+		Polygon2D intersection = new SimplePolygon2D();
+		intersection.addVertex(new Point2D(0,0));
+		intersection.addVertex(new Point2D(2,0));
+		intersection.addVertex(new Point2D(2,1));
+		
+		polygons.add(intersection);
+
+		drawer.drawPolygon(polygons);
+	}
+	
 	public static void writing() {
         try {
-            File statText = new File("/Users/andy/Desktop/Eclipse/Specifications/stattext.txt");
+            File statText = new File("/Users/andy/Desktop/stattext.txt");
             FileOutputStream is = new FileOutputStream(statText);
             OutputStreamWriter osw = new OutputStreamWriter(is);    
             Writer w = new BufferedWriter(osw);
@@ -111,12 +143,13 @@ public class fileReader {
             System.err.println("Problem writing to the file statsTest.txt");
         }
     }
-
+	
 	public static void main(String[] args) {	
 		
 		try {
-			//readFile();
-			readSecondFile();
+			//readFile(10);
+			multiDraw(1);
+			//readSecondFile(15);
 		
 			//writing();
 		} catch (IOException e) {
