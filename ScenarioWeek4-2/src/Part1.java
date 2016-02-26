@@ -28,8 +28,7 @@ public class Part1
 		PrintWriter writer = new PrintWriter("/Users/williambhot/Desktop/output.txt", "UTF-8");
 		writer.println(name);
 		writer.println(password);
-		int j = 0;
-		for(j = 0; j < 30; j++)
+		for(int j = 0; j < 30; j++)
 		{
 			System.out.println(j+1);
 			Polygon2D poly = fileReader.readFile(reader);
@@ -37,13 +36,13 @@ public class Part1
 			triangulate(poly);
 			System.out.println("Triangles: ");
 			int i = 1;
-			for(Polygon2D triangle : triangles)
+			/*for(Polygon2D triangle : triangles)
 			{
 				System.out.print(i + ": ");
 				//System.out.println("in for");
 				printPoly(triangle, "Triangle: ");
 				++i;
-			}
+			}*/
 			generateHash(); //And lots of it!!!
 			ArrayList<Point2D> guards = positionGuards();
 			fileReader.write(writer, j+1, guards);
@@ -189,7 +188,6 @@ public class Part1
 		}
 		return result;
 	}
-	
 	private static boolean isReachable(LineSegment2D l, int k)
 	{
 		if(k == 10)
@@ -201,7 +199,6 @@ public class Part1
 		LineSegment2D rhs = new LineSegment2D(mid, l.lastPoint());
 		return gallery.contains(mid) && isReachable(lhs, k+1) && isReachable(rhs, k+1);
 	}
-	
 	private static Polygon2D removeSequence(Polygon2D p, int startIndex, int endIndex)
 	{
 		Point2D start = p.vertex(startIndex);
@@ -222,7 +219,6 @@ public class Part1
 		}while(!result.vertex(i).almostEquals(end, epsilon));
 		return result;
 	}
-	
 	public static void printPoly (Polygon2D p, String tag) 
 	{
 		//System.out.println(tag);
@@ -296,7 +292,11 @@ public class Part1
 		ArrayList<Point2D> guards = new ArrayList<Point2D>();
 		int maxLength;
 		Point2D maxPoint = null;
-		ArrayList<Polygon2D> seen;
+		Polygon2D viewPoly;
+		ArrayList<Polygon2D> trianglesCopy = new ArrayList<Polygon2D>();
+		for (Polygon2D triangle : triangles) {
+			trianglesCopy.add(copyPoly(triangle));
+		}
 		while(!map.isEmpty())
 		{
 			Point2D guard;
@@ -311,29 +311,59 @@ public class Part1
 				}
 			}
 			guards.add(maxPoint);
-			//System.out.println(maxPoint);
-			seen = map.get(maxPoint);
+			viewPoly = ViewPolygon.getViewPolygon(gallery, maxPoint);
 			ArrayList<Point2D> pointsCopy = (ArrayList<Point2D>) points.clone();
-			if(seen == null)
+			for(Polygon2D triangle : trianglesCopy)
 			{
-				break;
-			}
-			for(Polygon2D triangle : seen)
-			{
-				for(Point2D p : pointsCopy)
+				if(containsTriangle(viewPoly, triangle))
 				{
-					if(!p.almostEquals(maxPoint, epsilon))
+					for(Point2D p : pointsCopy)
 					{
-						map.get(p).remove(triangle);
-						if(map.get(p).isEmpty())
+						if(map.get(p) == null)
 						{
 							map.remove(p);
 							points.remove(p);
+							continue;
+						}
+						if(!p.almostEquals(maxPoint, epsilon))
+						{
+//							System.out.println(map);
+//							System.out.println(p);
+//							System.out.println(triangle);
+//							System.out.println(map.get(p));
+							map.get(p).remove(triangle);
+							if(map.get(p).isEmpty())
+							{
+								map.remove(p);
+								points.remove(p);
+							}
 						}
 					}
 				}
-				pointsCopy = (ArrayList<Point2D>) points.clone();
 			}
+			//System.out.println(maxPoint);
+//			seen = map.get(maxPoint);
+//			ArrayList<Point2D> pointsCopy = (ArrayList<Point2D>) points.clone();
+//			if(seen == null)
+//			{
+//				break;
+//			}
+//			for(Polygon2D triangle : seen)
+//			{
+//				for(Point2D p : pointsCopy)
+//				{
+//					if(!p.almostEquals(maxPoint, epsilon))
+//					{
+//						map.get(p).remove(triangle);
+//						if(map.get(p).isEmpty())
+//						{
+//							map.remove(p);
+//							points.remove(p);
+//						}
+//					}
+//				}
+//				pointsCopy = (ArrayList<Point2D>) points.clone();
+//			}
 ////			System.out.println("before for");
 //			while(seen.size() > 0)
 //			{
@@ -344,5 +374,27 @@ public class Part1
 			points.remove(maxPoint);
 		}
 		return guards;
+	}
+	private static boolean containsTriangle(Polygon2D poly, Polygon2D triangle)
+	{
+		for(LineSegment2D edge : triangle.edges())
+		{
+			if(!containsLine(poly, edge, 0))
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+	private static boolean containsLine(Polygon2D p, LineSegment2D l, int k)
+	{
+		if(k == 10)
+		{
+			return true;
+		}
+		Point2D mid = new Point2D((l.firstPoint().getX() + l.lastPoint().getX())/2, (l.firstPoint().getY() + l.lastPoint().getY())/2);
+		LineSegment2D lhs = new LineSegment2D(l.firstPoint(), mid);
+		LineSegment2D rhs = new LineSegment2D(mid, l.lastPoint());
+		return p.contains(mid) && containsLine(p, lhs, k+1) && containsLine(p, rhs, k+1);
 	}
 }

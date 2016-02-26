@@ -63,7 +63,6 @@ public class ViewPolygon
 		}
 		return result;
 	}
-	
 	//Returns the position where a should be inserted in the polygon
 	private static int getPosition(Point2D a)
 	{
@@ -81,7 +80,6 @@ public class ViewPolygon
 		}
 		return -1;
 	}
-	
 	// Returns the intersection of ray from start in the direction of end 
 	// with the polygon, and null if there is none. End needs to be reachable from start.
 	private static Point2D intersectionPoly(Point2D start, Point2D end)
@@ -107,7 +105,6 @@ public class ViewPolygon
 		}
 		return intersection;
 	}
-	
 	private static Polygon2D copyPoly(Polygon2D p)
 	{
 		Polygon2D result = new SimplePolygon2D();
@@ -118,7 +115,6 @@ public class ViewPolygon
 		}
 		return result;
 	}
-	
 	public static void printEdges(Polygon2D p)
 	{
 		System.out.println("Edges: ");
@@ -141,7 +137,6 @@ public class ViewPolygon
 		LineSegment2D rhs = new LineSegment2D(mid, l.lastPoint());
 		return g.contains(mid) && isReachable(lhs, k+1) && isReachable(rhs, k+1);
 	}
-	
 	public static void printPoly (Polygon2D p, String tag) {
 		System.out.println(tag);
 		for(Point2D vertex : p.vertices())
