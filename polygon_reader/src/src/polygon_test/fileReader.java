@@ -22,6 +22,7 @@ import math.geom2d.polygon.*;
 public class fileReader {
 	
 	ViewPolygon viewer = new ViewPolygon();
+	Part1 guarder = new Part1();
 	static Drawing drawer = new Drawing();
 	static int second_Index = 1;
 	private static BufferedReader reader;
@@ -33,7 +34,7 @@ public class fileReader {
 	
 	public static void readFile(int index) throws IOException{
 		ArrayList <Polygon2D> polygons = new ArrayList<Polygon2D>();
-		FileReader r = new FileReader("/Users/andy/Desktop/Eclipse/Specifications/guards.pol");
+		FileReader r = new FileReader("/Users/rajind/Google Drive/Year 2/COMP205P/Scenario Week IV/guards.pol");
 		reader = new BufferedReader(r);
 		String line = null;
 		for(int i = 1; i <= index ; i++){
@@ -63,8 +64,8 @@ public class fileReader {
 
 	public static void Part2() throws IOException{
 		ArrayList <Polygon2D> polygons = new ArrayList<Polygon2D>();
-		FileReader r = new FileReader("/Users/andy/Desktop/Eclipse/Specifications/check.pol");
-		PrintWriter writer = new PrintWriter("/Users/andy/Desktop/outputy.txt");
+		FileReader r = new FileReader("/Users/rajind/Google Drive/Year 2/COMP205P/Scenario Week IV/multidraw.pol");
+		PrintWriter writer = new PrintWriter("/Users/rajind/Desktop/outputy.txt");
 		ViewPolygon chguards = new ViewPolygon();
 		writer.println(name);
 		writer.println(password);
@@ -90,9 +91,6 @@ public class fileReader {
 			polygon.addVertex(point);
 		}
 		
-
-		
-		
 		String[] arr2 = map_guards[1].split(", ");
 		Polygon2D guards = new SimplePolygon2D();
 		for(int i = 0; i<arr2.length; i+=2){
@@ -108,6 +106,7 @@ public class fileReader {
 		if(result!=null)
 		writer.println(arr[0] + ": " + "("+result.getX() + ", " + result.getY()+")");
 		writer.flush();
+		
 		}
 		
 		//drawer.drawPolygon(polygons,guardscol);
@@ -122,7 +121,7 @@ public class fileReader {
 	public static void readSecondFile(int index) throws IOException{
 		ArrayList <Polygon2D> polygons = new ArrayList<Polygon2D>();
 		ViewPolygon chguards = new ViewPolygon();
-		FileReader r2 = new FileReader("/Users/andy/Desktop/Eclipse/Specifications/check.pol.txt");
+		FileReader r2 = new FileReader("/Users/rajind/Google Drive/Year 2/COMP205P/Scenario Week IV/multidraw.pol");
 		
 		reader2 = new BufferedReader(r2);
 		String line = null;
@@ -161,6 +160,7 @@ public class fileReader {
 		Polygon2D test;
 		Polygon2D g_union = null;
 		for(Point2D guard : guardscol){
+			System.out.println("Printing guard " + guard);
 			Polygon2D extract = new SimplePolygon2D();
 			extract = chguards.getViewPolygon(polygons.get(0), guard);
 			if(g_union == null)
@@ -173,12 +173,11 @@ public class fileReader {
 		}
 		polygons.add(g_union);
 		//System.out.println("Twice");
-		/*
-		Point2D result = chguards.checkGuards(polygon, guardscol);
-		if(result!=null)
-		writer.println(result.getX() + result.getY());
-		*/
-		//}
+		
+//		Point2D result = chguards.checkGuards(polygon, guardscol);
+//		if(result!=null){
+//			guardscol.add(result);
+//		}
 		
 		drawer.drawPolygon(polygons,guardscol);
 		
@@ -190,8 +189,7 @@ public class fileReader {
 	}
 	public static void multiRead(int index) throws IOException{
 		ArrayList <Polygon2D> polygons = new ArrayList<Polygon2D>();
-		ViewPolygon chguards = new ViewPolygon();
-		FileReader r2 = new FileReader("/Users/andy/Desktop/Eclipse/Specifications/guards.pol");
+		FileReader r2 = new FileReader("/Users/rajind/Google Drive/Year 2/COMP205P/Scenario Week IV/part1.pol");
 		reader22 = new BufferedReader(r2);
 		String line = null;
 		for(int j =1 ;j<=index; j++)
@@ -216,6 +214,8 @@ public class fileReader {
 		}
 		
 		polygons.add(polygon);
+		
+		
 		
 		drawer.drawPolygon(polygons);
 		//System.out.print(arr[0] + ": ");

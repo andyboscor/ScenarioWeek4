@@ -184,11 +184,7 @@ public class Drawing extends JFrame{
         		Color outline = new Color(0,0,0);
         		g2d.setColor(outline);
         		polygonDraw.get(s).transform(z).transform(scale).draw(g2d);
-        		
-        	     
         	    
-        	    
-        		
         		Color fill = new Color(189, 195, 199);
             	g2d.setColor(fill);
         		polygonDraw.get(s).transform(z).transform(scale).fill(g2d);
@@ -265,22 +261,28 @@ public class Drawing extends JFrame{
 		if(guardsdraw!=null){
 			ArrayList<Ellipse2D> guards = new ArrayList();
 			
-			Color myNewColor = new Color (242, 120, 75);
-			g2d.setColor(myNewColor);
-			
-			double size = 50.00;
+			Color guardPos = new Color (242, 120, 75);
+			Color refpos = new Color (125, 125, 255);
+			g2d.setColor(guardPos);
 			
 			for (Point2D guard:guardsdraw)
 			{
-			Ellipse2D point = new Ellipse2D(guard.getX()+xTranslate,guard.getY()+yTranslate, (size)/500,size/500);
+			Ellipse2D point = new Ellipse2D(guard.getX()+xTranslate,guard.getY()+yTranslate, (1.0*0.7)/20,1.0/20.0);
 			point.fill(g2d);
 			guards.add(point);
-			
 			}
 			
 			for(int i = 0; i < guards.size(); i++){
-				guards.get(i).transform(scale).draw(g2d);
-				guards.get(i).transform(scale).fill(g2d);
+				if(i == guards.size()-1){
+					g2d.setColor(refpos);
+					guards.get(i).transform(scale).draw(g2d);
+					guards.get(i).transform(scale).fill(g2d);
+					
+				}
+				else{
+					guards.get(i).transform(scale).draw(g2d);
+					guards.get(i).transform(scale).fill(g2d);
+				}
 			}
 			
 		}
@@ -348,8 +350,8 @@ public class Drawing extends JFrame{
 			
 			
 			//reader.multiRead(1);
-		//	reader.readFile(1);
-			 reader.Part2();
+			//reader.readFile(1);
+			//reader.Part2();
 			reader.readSecondFile(1);
 		   			
 			
