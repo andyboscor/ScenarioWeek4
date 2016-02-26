@@ -116,7 +116,51 @@ public class Part1
 			triangles.add(aux);
 		}
 	}
-	
+	public static Polygon2D getFirstTriangle(Polygon2D p)
+	{
+		Polygon2D aux = copyPoly(p);
+		int i = 0;
+		Polygon2D triangle = null;
+		int count = 0;
+		while(aux.vertexNumber() > 3 && aux.area() != 0)
+		{
+			if(i == aux.vertexNumber())
+			{
+				i = 0;
+			}
+			int u = getIndexBefore(i, aux.vertexNumber());
+			int w = getIndexAfter(i, aux.vertexNumber());
+			//System.out.println(u + " " + i + " " + w);
+			if(isEar(aux, u, i, w))
+			{
+				triangle = new SimplePolygon2D();
+				triangle.addVertex(aux.vertex(u));
+				triangle.addVertex(aux.vertex(i));
+				triangle.addVertex(aux.vertex(w));
+				
+				++count;
+				System.out.print(count + ": ");
+				printPoly(triangle, "");
+				
+				aux.removeVertex(i);
+				break;
+			}
+			else 
+			{
+				LineSegment2D ui = new LineSegment2D(aux.vertex(u), aux.vertex(i));
+				LineSegment2D uw = new LineSegment2D(aux.vertex(u), aux.vertex(w));
+				if(ui.isColinear(uw))
+				{
+					aux.removeVertex(i);
+				}
+				else
+				{
+					++i;
+				}
+			}
+		}
+		return triangle;
+	}
 	private static int getIndexAfter(int i, int vertexNumber)
 	{
 		return (i+1) % vertexNumber;
