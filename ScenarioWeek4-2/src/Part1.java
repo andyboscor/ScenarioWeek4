@@ -28,56 +28,113 @@ public class Part1
 		PrintWriter writer = new PrintWriter("/Users/williambhot/Desktop/output.txt", "UTF-8");
 		writer.println(name);
 		writer.println(password);
-		for(int j = 0; j < 30; j++)
+		int j = 0;
+		for(j = 0; j < 30; j++)
 		{
 			System.out.println(j+1);
 			Polygon2D poly = fileReader.readFile(reader);
 			gallery = copyPoly(poly);
 			triangulate(poly);
-			printTriangles();
+			System.out.println("Triangles: ");
+			int i = 1;
+			for(Polygon2D triangle : triangles)
+			{
+				System.out.print(i + ": ");
+				//System.out.println("in for");
+				printPoly(triangle, "Triangle: ");
+				++i;
+			}
 			generateHash(); //And lots of it!!!
 			ArrayList<Point2D> guards = positionGuards();
 			fileReader.write(writer, j+1, guards);
+			
+			//Reset
 			map = new HashMap<Point2D, ArrayList<Polygon2D>>();
 			triangles = new ArrayList<Polygon2D>();
 			points = new ArrayList<Point2D>();
+			
+			//Checking
+//			if(guards.size() > Math.floor(poly.vertexNumber()/3))
+//			{
+//				System.out.println("Gallery " +(j+1) + " has " + poly.vertexNumber() + " vertices and " + guards.size() + " guards");
+//			}
+//			printPoly(poly, "gallery: ");
+//			for(Point2D p : guards)
+//			{
+//				if(poly.contains(p))
+//				{
+//					System.out.println("Error: The guard at " + p + " is not in the polygon");
+//				}
+//			}
 		}
 	}
 	public static void triangulate(Polygon2D p)
 	{
-//		printPoly(p, "Poly");
-		if(p.vertexNumber() == 3)
+		Polygon2D aux = copyPoly(p);
+		int i = 0;
+		Polygon2D triangle;
+		int count = 0;
+		while(aux.vertexNumber() > 3 && aux.area() != 0)
 		{
-			triangles.add(copyPoly(p));
-			return;
+			if(i == aux.vertexNumber())
+			{
+				i = 0;
+			}
+			int u = getIndexBefore(i, aux.vertexNumber());
+			int w = getIndexAfter(i, aux.vertexNumber());
+			//System.out.println(u + " " + i + " " + w);
+			if(isEar(aux, u, i, w))
+			{
+				triangle = new SimplePolygon2D();
+				triangle.addVertex(aux.vertex(u));
+				triangle.addVertex(aux.vertex(i));
+				triangle.addVertex(aux.vertex(w));
+				
+				triangles.add(triangle);
+				++count;
+				System.out.print(count + ": ");
+				printPoly(triangle, "");
+				
+				aux.removeVertex(i);
+			}
+			else 
+			{
+				LineSegment2D ui = new LineSegment2D(aux.vertex(u), aux.vertex(i));
+				LineSegment2D uw = new LineSegment2D(aux.vertex(u), aux.vertex(w));
+				if(ui.isColinear(uw))
+				{
+					aux.removeVertex(i);
+				}
+				else
+				{
+					++i;
+				}
+			}
 		}
-		Point2D v = p.vertex(1), u = p.vertex(0), w = p.vertex(2);
-		Polygon2D LHS;
-		Polygon2D RHS;
-		if(isReachable(new LineSegment2D(u, w), 0))
+		if(isEar(aux, 0, 1, 2))
 		{
-			//System.out.println(u + "->" + w + "->" + v);
-			LHS = new SimplePolygon2D();
-			LHS.addVertex(u);
-			LHS.addVertex(v);
-			LHS.addVertex(w);
-			RHS = copyPoly(p);
-			RHS.removeVertex(1);
+			triangles.add(aux);
 		}
-		else
-		{
-			Polygon2D aux = copyPoly(p);
-			int v1 = closestReachableVertex(aux, v);
-			//System.out.println("The closest reachable point from " + v + " is " + aux.vertex(v1));
-			LHS = removeSequence(p, 1, v1);
-			RHS = removeSequence(p, v1, 1);
-		}
-//		printPoly(LHS, "LHS:");
-//		printPoly(RHS, "RHS:");
-		triangulate(LHS);
-		triangulate(RHS);
 	}
 	
+	private static int getIndexAfter(int i, int vertexNumber)
+	{
+		return (i+1) % vertexNumber;
+	}
+	private static int getIndexBefore(int i, int vertexNumber)
+	{
+		if(i == 0)
+		{
+			return vertexNumber - 1;
+		}
+		return i - 1;
+	}
+	private static boolean isEar(Polygon2D aux, int u, int i, int w) 
+	{
+		LineSegment2D ui = new LineSegment2D(aux.vertex(u), aux.vertex(i));
+		LineSegment2D uw = new LineSegment2D(aux.vertex(u), aux.vertex(w));
+		return isReachable(uw, 0) && !ui.isColinear(uw);
+	}
 	private static Polygon2D copyPoly(Polygon2D p)
 	{
 		Polygon2D result = new SimplePolygon2D();
@@ -91,7 +148,7 @@ public class Part1
 	
 	private static boolean isReachable(LineSegment2D l, int k)
 	{
-		if(k == 8)
+		if(k == 10)
 		{
 			return true;
 		}
@@ -122,25 +179,21 @@ public class Part1
 		return result;
 	}
 	
-	public static void printTriangles()
-	{
-		//System.out.println("Triangles: ");
-		for(Polygon2D triangle : triangles)
-		{
-			/*for(Point2D p : triangle.vertices())
-			{
-				System.out.println(p);
-			}
-			System.out.println();*/
-		}
-	}
-	
 	public static void printPoly (Polygon2D p, String tag) 
 	{
-		System.out.println(tag);
+		//System.out.println(tag);
+		int i = 0;
 		for(Point2D vertex : p.vertices())
 		{
-				System.out.println(vertex);
+				if(i == p.vertexNumber() - 1)
+				{
+					System.out.print("(" + vertex.getX() + ", " + vertex.getY() + ")");
+				}
+				else
+				{
+					System.out.print("(" + vertex.getX() + ", " + vertex.getY() + "), ");
+				}
+				++i;
 		}
 		System.out.println();
 	}
