@@ -1,12 +1,15 @@
 package src.polygon_test;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.geom.AffineTransform;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
@@ -19,6 +22,7 @@ import math.geom2d.Box2D;
 import math.geom2d.Point2D;
 import math.geom2d.polygon.Polygon2D;
 import math.geom2d.conic.Ellipse2D;
+
 
 public class Drawing extends JFrame{
 	
@@ -122,6 +126,7 @@ public class Drawing extends JFrame{
 	
     void drawLines(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
+      //  g2d.scale(2, 2);
         double xFactor = 0;
         double xTranslate = 0;
         double yFactor = 0;
@@ -164,7 +169,7 @@ public class Drawing extends JFrame{
         		double factor = (shape.getWidth()/shape.getHeight())*0.90;
         		xFactor = (xSize/(shape.getWidth()))*0.90;
         		yFactor = (xFactor*factor)*0.90;
-        		System.out.println(factor);
+        		//System.out.println(factor);
         		
         		Point2D centreOfScale = new Point2D(30.0,30.0);
         		AffineTransform2D grid_Correction = new AffineTransform2D();
@@ -180,9 +185,33 @@ public class Drawing extends JFrame{
         		g2d.setColor(outline);
         		polygonDraw.get(s).transform(z).transform(scale).draw(g2d);
         		
-        		Color fill = new Color(175,175,175);
+        	     
+        	    
+        	    
+        		
+        		Color fill = new Color(189, 195, 199);
             	g2d.setColor(fill);
         		polygonDraw.get(s).transform(z).transform(scale).fill(g2d);
+        		 int fontSize = 7;
+        	        Font f = new Font("Comic Sans MS", Font.BOLD, fontSize);
+        	        g2d.setFont(f);
+        		g2d.setColor(Color.red);
+        		for(int j = 0; j < polygonDraw.get(0).vertexNumber(); j++){
+        	    	
+            		Point2D point = polygonDraw.get(0).vertex(j);
+            		double pointX = point.getX();
+            		double pointY = point.getY();
+            		new DecimalFormat("##.##").format(pointX);
+            		new DecimalFormat("##.##").format(pointY);
+            		double pozX = point.transform(z).transform(scale).getX();
+            		double pozY = point.transform(z).transform(scale).getY();
+            		int pozfX= (int) Math.round(pozX);
+            		int pozfY= (int) Math.round(pozY);
+            		String line ="          (" + Double.toString(pointX) + Double.toString(pointY) + ")         ";
+            		//g2d.drawString(line, pozfX, pozfY);
+            	    }
+        		
+        	    
         		
         	}
     		else{
@@ -203,10 +232,27 @@ public class Drawing extends JFrame{
         		g2d.setColor(outline);
         		polygonDraw.get(s).transform(z).transform(scale).draw(g2d);
         		
-        		Color fill = new Color(255,255,125);
+        		Color fill = new Color(92, 151, 191);
             	g2d.setColor(fill);
         		polygonDraw.get(s).transform(z).transform(scale).fill(g2d);
-        		tester.printPoly(polygonDraw.get(s), "Triangle");
+        		g2d.setColor(Color.red);
+        		for(int j = 0; j < polygonDraw.get(0).vertexNumber(); j++){
+        	    	
+            		Point2D point = polygonDraw.get(0).vertex(j);
+            		double pointX = point.getX();
+            		double pointY = point.getY();
+            		 
+            		double pozX = point.transform(z).transform(scale).getX();
+            		new DecimalFormat("##.##").format(pointX);
+            		new DecimalFormat("##.##").format(pointY);
+            		double pozY = point.transform(z).transform(scale).getY();
+            		int pozfX= (int) Math.round(pozX);
+            		int pozfY= (int) Math.round(pozY);
+            		String line ="          (" + Double.toString(pointX) + Double.toString(pointY) + ")         ";
+            		//g2d.drawString(line, pozfX, pozfY);
+        
+            	    }
+        	//	tester.printPoly(polygonDraw.get(s), "Triangle");
 //        		try {
 //					TimeUnit.MILLISECONDS.sleep(1000);
 //				} catch (InterruptedException e) {
@@ -214,11 +260,12 @@ public class Drawing extends JFrame{
 //					e.printStackTrace();
 //				}
     		}
+        	
         }
 		if(guardsdraw!=null){
 			ArrayList<Ellipse2D> guards = new ArrayList();
 			
-			Color myNewColor = new Color (30,192,51);
+			Color myNewColor = new Color (242, 120, 75);
 			g2d.setColor(myNewColor);
 			
 			double size = 50.00;
@@ -235,7 +282,9 @@ public class Drawing extends JFrame{
 				guards.get(i).transform(scale).draw(g2d);
 				guards.get(i).transform(scale).fill(g2d);
 			}
+			
 		}
+		
     }
     
     public void paint(Graphics g) {
@@ -245,7 +294,7 @@ public class Drawing extends JFrame{
     
     public void drawPolygon(Polygon2D polygon){
     	this.polygonDraw.add(polygon);
-    	System.out.println(polygonDraw.get(0).vertices());
+   // 	System.out.println(polygonDraw.get(0).vertices());
     	SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -258,7 +307,7 @@ public class Drawing extends JFrame{
     public void drawPolygon(Polygon2D polygon, Collection<Point2D> guards){
     	this.polygonDraw.add(polygon);
     	this.guardsdraw = guards;
-    	System.out.println(polygonDraw.get(0).vertices());
+    //	System.out.println(polygonDraw.get(0).vertices());
     	SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -271,7 +320,7 @@ public class Drawing extends JFrame{
     public void drawPolygon(ArrayList <Polygon2D> polygon, Collection<Point2D> guards){
     	polygonDraw = polygon;
     	guardsdraw = guards;
-    	System.out.println(polygonDraw.get(0).vertices());
+    //	System.out.println(polygonDraw.get(0).vertices());
     	SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -284,7 +333,7 @@ public class Drawing extends JFrame{
     
     public void drawPolygon(ArrayList<Polygon2D> polygon){
     	this.polygonDraw = polygon;
-    	System.out.println(polygonDraw.get(0).vertices());
+    	//System.out.println(polygonDraw.get(0).vertices());
     	SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -296,8 +345,14 @@ public class Drawing extends JFrame{
     
 	public static void main(String[] args) {
 		try {
+			
+			
 			//reader.multiRead(1);
+		//	reader.readFile(1);
+			 reader.Part2();
 			reader.readSecondFile(1);
+		   			
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

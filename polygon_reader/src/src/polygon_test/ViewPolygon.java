@@ -1,10 +1,16 @@
 package src.polygon_test;
+
 import java.util.ArrayList;
 import java.util.Collection;
+
 import math.geom2d.Point2D;
+import math.geom2d.line.DegeneratedLine2DException;
+import math.geom2d.line.Line2D;
 import math.geom2d.line.LineSegment2D;
 import math.geom2d.line.Ray2D;
+import math.geom2d.line.StraightLine2D;
 import math.geom2d.polygon.*;
+
 public class ViewPolygon
 {
 	private final static double epsilon = 0.0000000001;
@@ -117,14 +123,14 @@ public class ViewPolygon
 	
 	public static void printEdges(Polygon2D p)
 	{
-		//System.out.println("Edges: ");
+		System.out.println("Edges: ");
 		int i = 1;
 		for(LineSegment2D edge : p.edges())
 		{
-		//	System.out.println(i + ": " + edge.firstPoint() + "->" + edge.lastPoint());
+			System.out.println(i + ": " + edge.firstPoint() + "->" + edge.lastPoint());
 			i++;
 		}
-		//System.out.println();
+		System.out.println();
 	}
 	private static boolean isReachable(LineSegment2D l, int k)
 	{
@@ -146,13 +152,14 @@ public class ViewPolygon
 		}
 		System.out.println();
 	}
+
 	public static ArrayList<Polygon2D> polyDiff(Polygon2D p1, Polygon2D p2)
 	{
 			ArrayList<Polygon2D> difference = new ArrayList<Polygon2D>();
 			difference.add(Polygons2D.difference(p1, p2));
 			return difference;
 	}
-	public void checkGuards(Polygon2D gallery, Collection<Point2D> guards)
+	public static Point2D checkGuards(Polygon2D gallery, Collection<Point2D> guards)
 	{
 		Polygon2D g_union = new SimplePolygon2D(),temp = new SimplePolygon2D();
 		g_union.addVertex(new Point2D(0,0));
@@ -169,6 +176,7 @@ public class ViewPolygon
 		}
 		Polygon2D diff = Polygons2D.difference(gallery, g_union);
 		Polygon2D test = new SimplePolygon2D();
+		
 		int len = diff.vertexNumber();
 	//	printPoly(diff,"difference:");
 		int j = 0;
@@ -197,12 +205,11 @@ public class ViewPolygon
 		
 		//printPoly(test,"test:");
 		Point2D point = test.centroid();
-		if(point != null)
-		{
-		System.out.print ("(" +point.getX() + ", ");
-		System.out.print(point.getY()+ ")");
-		System.out.println();
-		}
+		//	System.out.print ("(" +point.getX() + ", ");
+		//	System.out.print(point.getY()+ ")");
+		//	System.out.println();
+		return point;
+		
 		
 	}
 /*
@@ -232,6 +239,7 @@ public class ViewPolygon
 		}
 		System.out.println();
 	}
+
 /* Test main */
 /*
 	public static void main(String[] args)
